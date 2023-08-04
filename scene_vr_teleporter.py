@@ -4,46 +4,6 @@ import harfang as hg
 import sys
 import math
 
-hg.InputInit()
-hg.WindowSystemInit()
-
-res_x, res_y = 1280, 720
-win = hg.RenderInit("Harfang - OpenVR Scene", res_x, res_y, hg.RF_VSync | hg.RF_MSAA4X)
-
-hg.AddAssetsFolder("assets_compiled")
-
-pipeline = hg.CreateForwardPipeline()
-res = hg.PipelineResources()
-
-render_data = hg.SceneForwardPipelineRenderData()  # this object is used by the low-level scene rendering API to share view-independent data with both eyes
-
-# OpenVR initialization
-if not hg.OpenVRInit():
-	sys.exit()
-
-vr_left_fb = hg.OpenVRCreateEyeFrameBuffer(hg.OVRAA_MSAA4x)
-vr_right_fb = hg.OpenVRCreateEyeFrameBuffer(hg.OVRAA_MSAA4x)
-
-# Create models
-vtx_layout = hg.VertexLayoutPosFloatNormUInt8()
-
-cube_mdl = hg.CreateCubeModel(vtx_layout, 0.1, 0.1, 0.1)
-cube_ref = res.AddModel('cube', cube_mdl)
-ground_mdl = hg.CreateCubeModel(vtx_layout, 50, 0.01, 50)
-ground_ref = res.AddModel('ground', ground_mdl)
-
-# Teleporter spline
-line_shader = hg.LoadProgramFromAssets('shaders/pos_rgb')
-vtx_layout_spline = hg.VertexLayout()
-vtx_layout_spline.Begin()
-vtx_layout_spline.Add(hg.A_Position, 3, hg.AT_Float)
-vtx_layout_spline.Add(hg.A_Color0, 3, hg.AT_Float)
-vtx_layout_spline.End()
-
-# Load shader
-prg_ref = hg.LoadPipelineProgramRefFromAssets('core/shader/pbr.hps', res, hg.GetForwardPipelineInfo())
-
-
 # Create materials
 def create_material(ubc, orm):
 	mat = hg.Material()
@@ -162,7 +122,7 @@ def UpdateVRControllers(vr_controller, vr_controller_idx):
 	return vr_controller, vr_controller_idx
 
 
-def DrawTeleporterSpline(controller_mtx, ground_mtx, vid):
+def DrawTeleporterSpline(controller_mtx, ground_mtx, vid, vtx_layout_spline, line_shader):
 	dir_teleporter = hg.GetZ(controller_mtx)
 	pos_start = hg.GetT(controller_mtx)
 	cos_angle = hg.Dot(dir_teleporter, hg.Normalize(hg.Vec3(dir_teleporter.x, 0, dir_teleporter.z)))
@@ -170,10 +130,10 @@ def DrawTeleporterSpline(controller_mtx, ground_mtx, vid):
 	angle = math.acos(cos_angle)
 	strength_force = pow((math.sin(angle) + 1) / 2, 2) * 2
 
-	DrawSpline(pos_start, pos_start + dir_teleporter * strength_force, ground_mtx + hg.Vec3(0, -strength_force, 0), ground_mtx, vid)
+	DrawSpline(pos_start, pos_start + dir_teleporter * strength_force, ground_mtx + hg.Vec3(0, -strength_force, 0), ground_mtx, vid, vtx_layout_spline, line_shader)
 
 
-def DrawSpline(p1, p2, p3, p4, vid):
+def DrawSpline(p1, p2, p3, p4, vid, vtx_layout_spline, line_shader):
 	step = 10
 	prev_value = [p1.x, p1.y, p1.z]
 	vtx = hg.Vertices(vtx_layout_spline, step * 2)
@@ -192,6 +152,45 @@ def DrawSpline(p1, p2, p3, p4, vid):
 
 
 def main():
+	hg.InputInit()
+	hg.WindowSystemInit()
+
+	res_x, res_y = 1280, 720
+	win = hg.RenderInit("Harfang - OpenVR Scene", res_x, res_y, hg.RF_VSync | hg.RF_MSAA4X)
+
+	hg.AddAssetsFolder("assets_compiled")
+
+	pipeline = hg.CreateForwardPipeline()
+	res = hg.PipelineResources()
+
+	render_data = hg.SceneForwardPipelineRenderData()  # this object is used by the low-level scene rendering API to share view-independent data with both eyes
+
+	# OpenVR initialization
+	if not hg.OpenVRInit():
+		sys.exit()
+
+	vr_left_fb = hg.OpenVRCreateEyeFrameBuffer(hg.OVRAA_MSAA4x)
+	vr_right_fb = hg.OpenVRCreateEyeFrameBuffer(hg.OVRAA_MSAA4x)
+
+	# Create models
+	vtx_layout = hg.VertexLayoutPosFloatNormUInt8()
+
+	cube_mdl = hg.CreateCubeModel(vtx_layout, 0.1, 0.1, 0.1)
+	cube_ref = res.AddModel('cube', cube_mdl)
+	ground_mdl = hg.CreateCubeModel(vtx_layout, 50, 0.01, 50)
+	ground_ref = res.AddModel('ground', ground_mdl)
+
+	# Teleporter spline
+	line_shader = hg.LoadProgramFromAssets('shaders/pos_rgb')
+	vtx_layout_spline = hg.VertexLayout()
+	vtx_layout_spline.Begin()
+	vtx_layout_spline.Add(hg.A_Position, 3, hg.AT_Float)
+	vtx_layout_spline.Add(hg.A_Color0, 3, hg.AT_Float)
+	vtx_layout_spline.End()
+
+	# Load shader
+	prg_ref = hg.LoadPipelineProgramRefFromAssets('core/shader/pbr.hps', res, hg.GetForwardPipelineInfo())
+
 	# Create scene
 	scene = hg.Scene()
 
@@ -270,7 +269,7 @@ def main():
 		hg.SetViewRect(vid, 0, 0, vr_state.width, vr_state.height)
 		hg.SetViewClear(vid, 0, 0, 1.0, 0)
 		hg.SetViewTransform(vid, left.view, left.proj)
-		DrawTeleporterSpline(controller.World(), teleporter_node.GetTransform().GetPos(), vid)
+		DrawTeleporterSpline(controller.World(), teleporter_node.GetTransform().GetPos(), vid, vtx_layout_spline, line_shader)
 
 		vid += 1
 
@@ -278,7 +277,7 @@ def main():
 		hg.SetViewRect(vid, 0, 0, vr_state.width, vr_state.height)
 		hg.SetViewClear(vid, 0, 0, 1.0, 0)
 		hg.SetViewTransform(vid, right.view, right.proj)
-		DrawTeleporterSpline(controller.World(), teleporter_node.GetTransform().GetPos(), vid)
+		DrawTeleporterSpline(controller.World(), teleporter_node.GetTransform().GetPos(), vid, vtx_layout_spline, line_shader)
 
 		vid += 1
 
