@@ -1,0 +1,435 @@
+{
+	"canvas": {
+		"clear_color": true,
+		"clear_z": true,
+		"color": [
+			17,
+			17,
+			17,
+			255
+		]
+	},
+	"environment": {
+		"ambient": [
+			0,
+			0,
+			0,
+			255
+		],
+		"current_camera": null,
+		"fog_color": [
+			255,
+			255,
+			255,
+			255
+		],
+		"fog_far": 0.0,
+		"fog_near": 0.0
+	},
+	"nodes": [
+		{
+			"components": [
+				0,
+				4294967295,
+				0,
+				4294967295,
+				4294967295
+			],
+			"disabled": false,
+			"idx": 0,
+			"name": "teleporter_outer_edge"
+		},
+		{
+			"components": [
+				1,
+				4294967295,
+				1,
+				4294967295,
+				4294967295
+			],
+			"disabled": false,
+			"idx": 1,
+			"name": "teleporter_inner_target"
+		},
+		{
+			"components": [
+				2,
+				4294967295,
+				2,
+				4294967295,
+				4294967295
+			],
+			"disabled": false,
+			"idx": 2,
+			"name": "outer_limit"
+		},
+		{
+			"components": [
+				3,
+				4294967295,
+				3,
+				4294967295,
+				4294967295
+			],
+			"disabled": true,
+			"idx": 3,
+			"name": "inner_limit"
+		}
+	],
+	"objects": [
+		{
+			"material_infos": [
+				{
+					"name": "01 - Default"
+				}
+			],
+			"materials": [
+				{
+					"blend_mode": "add",
+					"depth_test": "less",
+					"face_culling": "cw",
+					"program": "core/shader/default.hps",
+					"textures": [
+						{
+							"name": "uDiffuseMap",
+							"stage": 0
+						},
+						{
+							"name": "uSelfMap",
+							"stage": 4,
+							"texture": {
+								"flags": 0,
+								"name": "teleporter/teleporter_outer_edge.png"
+							}
+						}
+					],
+					"values": [
+						{
+							"count": 1,
+							"name": "uDiffuseColor",
+							"type": "vec4",
+							"value": [
+								9.999999974752427e-07,
+								9.999899930335232e-07,
+								9.999899930335232e-07,
+								1.0
+							]
+						},
+						{
+							"count": 1,
+							"name": "uSelfColor",
+							"type": "vec4",
+							"value": [
+								0.0,
+								0.0,
+								0.0,
+								-1.0
+							]
+						},
+						{
+							"count": 1,
+							"name": "uSpecularColor",
+							"type": "vec4",
+							"value": [
+								0.0,
+								0.0,
+								0.0,
+								0.03124999813735485
+							]
+						}
+					],
+					"write_a": true,
+					"write_b": true,
+					"write_g": true,
+					"write_r": true,
+					"write_z": false
+				}
+			],
+			"name": "teleporter/teleporter_outer_edge.geo"
+		},
+		{
+			"material_infos": [
+				{
+					"name": "teleporter_outer_edge"
+				}
+			],
+			"materials": [
+				{
+					"blend_mode": "add",
+					"depth_test": "less",
+					"face_culling": "cw",
+					"program": "core/shader/default.hps",
+					"textures": [
+						{
+							"name": "uDiffuseMap",
+							"stage": 0
+						},
+						{
+							"name": "uSelfMap",
+							"stage": 4,
+							"texture": {
+								"flags": 0,
+								"name": "teleporter/teleporter_inner_target.png"
+							}
+						}
+					],
+					"values": [
+						{
+							"count": 1,
+							"name": "uDiffuseColor",
+							"type": "vec4",
+							"value": [
+								9.999999974752427e-07,
+								9.999899930335232e-07,
+								9.999899930335232e-07,
+								1.0
+							]
+						},
+						{
+							"count": 1,
+							"name": "uSelfColor",
+							"type": "vec4",
+							"value": [
+								0.0,
+								0.0,
+								0.0,
+								-1.0
+							]
+						},
+						{
+							"count": 1,
+							"name": "uSpecularColor",
+							"type": "vec4",
+							"value": [
+								0.0,
+								0.0,
+								0.0,
+								0.03124999813735485
+							]
+						}
+					],
+					"write_a": true,
+					"write_b": true,
+					"write_g": true,
+					"write_r": true,
+					"write_z": false
+				}
+			],
+			"name": "teleporter/teleporter_inner_target.geo"
+		},
+		{
+			"material_infos": [
+				{
+					"name": "teleporter_limit"
+				}
+			],
+			"materials": [
+				{
+					"blend_mode": "add",
+					"depth_test": "less",
+					"face_culling": "cw",
+					"program": "core/shader/default.hps",
+					"textures": [
+						{
+							"name": "uDiffuseMap",
+							"stage": 0
+						},
+						{
+							"name": "uSelfMap",
+							"stage": 4,
+							"texture": {
+								"flags": 0,
+								"name": "teleporter/playground_limit_hash.png"
+							}
+						}
+					],
+					"values": [
+						{
+							"count": 1,
+							"name": "uDiffuseColor",
+							"type": "vec4",
+							"value": [
+								9.999999974752427e-07,
+								9.999899930335232e-07,
+								9.999899930335232e-07,
+								1.0
+							]
+						},
+						{
+							"count": 1,
+							"name": "uSelfColor",
+							"type": "vec4",
+							"value": [
+								0.0,
+								0.0,
+								0.0,
+								-1.0
+							]
+						},
+						{
+							"count": 1,
+							"name": "uSpecularColor",
+							"type": "vec4",
+							"value": [
+								0.0,
+								0.0,
+								0.0,
+								0.03124999813735485
+							]
+						}
+					],
+					"write_a": true,
+					"write_b": true,
+					"write_g": true,
+					"write_r": true,
+					"write_z": false
+				}
+			],
+			"name": "teleporter/outer_limit.geo"
+		},
+		{
+			"material_infos": [
+				{
+					"name": "teleporter_limit"
+				}
+			],
+			"materials": [
+				{
+					"blend_mode": "add",
+					"depth_test": "less",
+					"face_culling": "cw",
+					"program": "core/shader/default.hps",
+					"textures": [
+						{
+							"name": "uDiffuseMap",
+							"stage": 0
+						},
+						{
+							"name": "uSelfMap",
+							"stage": 4,
+							"texture": {
+								"flags": 0,
+								"name": "teleporter/playground_limit_hash.png"
+							}
+						}
+					],
+					"values": [
+						{
+							"count": 1,
+							"name": "uDiffuseColor",
+							"type": "vec4",
+							"value": [
+								9.999999974752427e-07,
+								9.999899930335232e-07,
+								9.999899930335232e-07,
+								1.0
+							]
+						},
+						{
+							"count": 1,
+							"name": "uSelfColor",
+							"type": "vec4",
+							"value": [
+								0.0,
+								0.0,
+								0.0,
+								-1.0
+							]
+						},
+						{
+							"count": 1,
+							"name": "uSpecularColor",
+							"type": "vec4",
+							"value": [
+								0.0,
+								0.0,
+								0.0,
+								0.03124999813735485
+							]
+						}
+					],
+					"write_a": true,
+					"write_b": true,
+					"write_g": true,
+					"write_r": true,
+					"write_z": true
+				}
+			],
+			"name": "teleporter/inner_limit.geo"
+		}
+	],
+	"transforms": [
+		{
+			"parent": null,
+			"pos": [
+				0.0,
+				0.05000000074505806,
+				0.0
+			],
+			"rot": [
+				-7.016707009123218e-15,
+				0.0,
+				0.0
+			],
+			"scl": [
+				0.757013201713562,
+				1.0,
+				0.757013201713562
+			]
+		},
+		{
+			"parent": null,
+			"pos": [
+				0.0,
+				0.05000000074505806,
+				0.0
+			],
+			"rot": [
+				-1.8091788578865863e-14,
+				0.0,
+				0.0
+			],
+			"scl": [
+				0.24057123064994812,
+				1.0,
+				0.24057123064994812
+			]
+		},
+		{
+			"parent": null,
+			"pos": [
+				0.0,
+				0.054999999701976776,
+				0.0
+			],
+			"rot": [
+				-5.037110543259929e-15,
+				0.0,
+				0.0
+			],
+			"scl": [
+				1.75,
+				1.0,
+				1.75
+			]
+		},
+		{
+			"parent": null,
+			"pos": [
+				0.0,
+				0.054999999701976776,
+				0.0
+			],
+			"rot": [
+				-9.954858897658677e-15,
+				0.0,
+				0.0
+			],
+			"scl": [
+				0.5442257523536682,
+				1.0,
+				0.5442257523536682
+			]
+		}
+	]
+}
