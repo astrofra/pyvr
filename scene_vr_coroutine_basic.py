@@ -3,6 +3,7 @@
 import harfang as hg
 import asyncio
 import sys
+from math import pi
 
 # Create materials
 def create_material(prg_ref, ubc, orm):
@@ -13,10 +14,43 @@ def create_material(prg_ref, ubc, orm):
 	return mat
 
 
-async def coroutine_0():
-    dt = 1.0/100.0
-    while True:
-        await asyncio.sleep(dt)
+async def coroutine_rotation(node):
+	dt = 1.0/100.0
+	trs = node.GetTransform()
+	rot = trs.GetRot()
+	while True:
+		rot.y += pi * dt / 2.0
+		trs.SetRot(rot)
+		await asyncio.sleep(dt)
+
+async def coroutine_position(node, steps=120, speed=1.0):
+	dt = 1.0/100.0
+	trs = node.GetTransform()
+	pos = trs.GetPos()
+	while True:
+		# Translation on +X
+		for i in range(steps):
+			pos.x += dt * speed
+			trs.SetPos(pos)
+			await asyncio.sleep(dt)
+
+		# Translation on +Z
+		for i in range(steps):
+			pos.z += dt * speed
+			trs.SetPos(pos)
+			await asyncio.sleep(dt)
+
+		# Translation on -X
+		for i in range(steps):
+			pos.x -= dt * speed
+			trs.SetPos(pos)
+			await asyncio.sleep(dt)
+
+		# Translation on -Z
+		for i in range(steps):
+			pos.z -= dt * speed
+			trs.SetPos(pos)
+			await asyncio.sleep(dt)
 
 
 async def main_async():
@@ -60,8 +94,10 @@ async def main_async():
 	lgt = hg.CreateSpotLight(scene, hg.TransformationMat4(hg.Vec3(-8, 4, -5), hg.Vec3(hg.Deg(19), hg.Deg(59), 0)), 0, hg.Deg(5), hg.Deg(30), hg.Color.White, hg.Color.White, 10, hg.LST_Map, 0.0001)
 	back_lgt = hg.CreatePointLight(scene, hg.TranslationMat4(hg.Vec3(2.4, 1, 0.5)), 10, hg.Color(94 / 255, 255 / 255, 228 / 255, 1), hg.Color(94 / 255, 1, 228 / 255, 1), 0)
 
-	mat_cube = create_material(prg_ref, hg.Vec4(255 / 255, 230 / 255, 20 / 255, 1), hg.Vec4(1, 0.658, 0., 1))
-	hg.CreateObject(scene, hg.TransformationMat4(hg.Vec3(0, 0.5, 0), hg.Vec3(0, hg.Deg(70), 0)), cube_ref, [mat_cube])
+	mat_cube_0 = create_material(prg_ref, hg.Vec4(1.0, 0.7, 0.0, 1), hg.Vec4(1, 0.658, 0., 1))
+	node_cube_0 = hg.CreateObject(scene, hg.TransformationMat4(hg.Vec3(0, 0.5, 0), hg.Vec3(0, 0, 0)), cube_ref, [mat_cube_0])
+	mat_cube_1 = create_material(prg_ref, hg.Vec4(1.0, 0, 0, 1), hg.Vec4(1, 0.658, 0., 1))
+	node_cube_1 = hg.CreateObject(scene, hg.TransformationMat4(hg.Vec3(1.0, 0.5, 1.0), hg.Vec3(0, 0, 0)), cube_ref, [mat_cube_1])
 
 	mat_ground = create_material(prg_ref, hg.Vec4(255 / 255, 120 / 255, 147 / 255, 1), hg.Vec4(1, 1, 0.1, 1))
 	hg.CreateObject(scene, hg.TranslationMat4(hg.Vec3(0, 0, 0)), ground_ref, [mat_ground])
@@ -84,6 +120,16 @@ async def main_async():
 	quad_uniform_set_value_list.push_back(hg.MakeUniformSetValue("color", hg.Vec4(1, 1, 1, 1)))
 
 	quad_uniform_set_texture_list = hg.UniformSetTextureList()
+
+	# Coroutine
+	task0 = asyncio.create_task(coroutine_rotation(node_cube_0))
+	task1 = asyncio.create_task(coroutine_position(node_cube_0, 120, 1.0))
+
+	task2 = asyncio.create_task(coroutine_rotation(node_cube_1))
+	task3 = asyncio.create_task(coroutine_position(node_cube_1, 240, 4.0))
+
+	# Run the main function in a separate thread
+	loop = asyncio.get_event_loop()
 
 	# Main loop
 	while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(win):
@@ -125,6 +171,8 @@ async def main_async():
 		quad_uniform_set_texture_list.push_back(hg.MakeUniformSetTexture("s_tex", hg.OpenVRGetColorTexture(vr_right_fb), 0))
 		hg.SetT(quad_matrix, hg.Vec3(-eye_t_x, 0, 1))
 		hg.DrawModel(vid, quad_model, tex0_program, quad_uniform_set_value_list, quad_uniform_set_texture_list, quad_matrix, quad_render_state)
+
+		await asyncio.sleep(0)
 
 		hg.Frame()
 		hg.OpenVRSubmitFrame(vr_left_fb, vr_right_fb)
