@@ -1,6 +1,7 @@
 # Display a scene in VR
 
 import harfang as hg
+import asyncio
 import sys
 
 # Create materials
@@ -12,7 +13,13 @@ def create_material(prg_ref, ubc, orm):
 	return mat
 
 
-def main():
+async def coroutine_0():
+    dt = 1.0/100.0
+    while True:
+        await asyncio.sleep(dt)
+
+
+async def main_async():
 	hg.InputInit()
 	hg.WindowSystemInit()
 
@@ -128,4 +135,4 @@ def main():
 	hg.RenderShutdown()
 	hg.DestroyWindow(win)
 
-main()
+asyncio.run(main_async())
