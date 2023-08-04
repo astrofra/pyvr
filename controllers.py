@@ -1,6 +1,6 @@
 import harfang as hg
 
-def InitVRControllers(vr_controller=None, vr_controller_idx=None):
+def init_vr_controllers(vr_controller=None, vr_controller_idx=None):
 
 	if vr_controller is None or vr_controller_idx is None:
 		vr_controller = [hg.VRController(), hg.VRController()]
@@ -34,8 +34,8 @@ def InitVRControllers(vr_controller=None, vr_controller_idx=None):
 	return vr_controller, vr_controller_idx
 
 
-def UpdateVRControllers(vr_controller, vr_controller_idx):
-	vr_controller, vr_controller_idx = InitVRControllers(vr_controller, vr_controller_idx)
+def update_vr_controllers(vr_controller, vr_controller_idx):
+	vr_controller, vr_controller_idx = init_vr_controllers(vr_controller, vr_controller_idx)
 
 	for i in range(2):
 		vr_controller[i].Update()

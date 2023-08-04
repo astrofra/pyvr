@@ -1,9 +1,9 @@
 import harfang as hg
 import math
-from helpers import DrawSpline
+from helpers import draw_spline
 
 
-def UpdateTeleporterPos(controller, actor_pos, head_pos, teleporter_pos, playground=None):
+def update_teleporter_pos(controller, actor_pos, head_pos, teleporter_pos, playground=None):
 	if controller.IsConnected():
 		world = controller.World()
 		T = hg.GetT(world)
@@ -30,7 +30,7 @@ def UpdateTeleporterPos(controller, actor_pos, head_pos, teleporter_pos, playgro
 	return actor_pos, teleporter_pos
 
 
-def UpdateTeleporterNode(controller, actor_pos, head_pos, teleporter_node, playground=None):
+def update_teleporter_node(controller, actor_pos, head_pos, teleporter_node, playground=None):
 	if controller.IsConnected():
 		world = controller.World()
 		T = hg.GetT(world)
@@ -62,12 +62,12 @@ def UpdateTeleporterNode(controller, actor_pos, head_pos, teleporter_node, playg
 	return actor_pos
 
 
-def GetHeadPos(vr_state, actor_pos):
+def get_head_pos(vr_state, actor_pos):
 	headT = hg.GetT(vr_state.head)
 	return hg.Vec3(headT.x, actor_pos.y, headT.z)
 
 
-def DrawTeleporterSpline(controller_mtx, ground_mtx, vid, vtx_layout_spline, line_shader):
+def draw_teleporter_spline(controller_mtx, ground_mtx, vid, vtx_layout_spline, line_shader):
 	dir_teleporter = hg.GetZ(controller_mtx)
 	pos_start = hg.GetT(controller_mtx)
 	cos_angle = hg.Dot(dir_teleporter, hg.Normalize(hg.Vec3(dir_teleporter.x, 0, dir_teleporter.z)))
@@ -75,4 +75,4 @@ def DrawTeleporterSpline(controller_mtx, ground_mtx, vid, vtx_layout_spline, lin
 	angle = math.acos(cos_angle)
 	strength_force = pow((math.sin(angle) + 1) / 2, 2) * 2
 
-	DrawSpline(pos_start, pos_start + dir_teleporter * strength_force, ground_mtx + hg.Vec3(0, -strength_force, 0), ground_mtx, vid, vtx_layout_spline, line_shader)
+	draw_spline(pos_start, pos_start + dir_teleporter * strength_force, ground_mtx + hg.Vec3(0, -strength_force, 0), ground_mtx, vid, vtx_layout_spline, line_shader)

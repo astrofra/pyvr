@@ -3,8 +3,8 @@
 import harfang as hg
 import sys
 import math
-from teleporter import UpdateTeleporterNode, GetHeadPos, DrawTeleporterSpline
-from controllers import InitVRControllers, UpdateVRControllers
+from teleporter import update_teleporter_node, get_head_pos, draw_teleporter_spline
+from controllers import init_vr_controllers, update_vr_controllers
 
 def main():
 	hg.InputInit()
@@ -82,25 +82,25 @@ def main():
 	head_pos = hg.Vec3()
 	playground = [hg.Vec3(-3, 0, -3), hg.Vec3(3, 0, 3)]
 
-	vr_controller, vr_controller_idx = InitVRControllers()
+	vr_controller, vr_controller_idx = init_vr_controllers()
 
 	# Main loop
 	while not hg.ReadKeyboard().Key(hg.K_Escape):
 		dt = hg.TickClock()
 
 		# Teleporter and VR controller update
-		vr_controller, vr_controller_idx = UpdateVRControllers(vr_controller, vr_controller_idx)
+		vr_controller, vr_controller_idx = update_vr_controllers(vr_controller, vr_controller_idx)
 		hand_left.GetTransform().SetWorld(vr_controller[0].World())
 		hand_right.GetTransform().SetWorld(vr_controller[1].World())
 
 		controller = vr_controller[0]
-		actor_pos = UpdateTeleporterNode(controller, actor_pos, head_pos, teleporter_node)
+		actor_pos = update_teleporter_node(controller, actor_pos, head_pos, teleporter_node)
 
 		scene.Update(dt)
 
 		vr_state = hg.OpenVRGetState(hg.TranslationMat4(actor_pos), 0.1, 200)
 
-		head_pos = GetHeadPos(vr_state, actor_pos)
+		head_pos = get_head_pos(vr_state, actor_pos)
 
 		left, right = hg.OpenVRStateToViewState(vr_state)
 
@@ -124,7 +124,7 @@ def main():
 		hg.SetViewRect(vid, 0, 0, vr_state.width, vr_state.height)
 		hg.SetViewClear(vid, 0, 0, 1.0, 0)
 		hg.SetViewTransform(vid, left.view, left.proj)
-		DrawTeleporterSpline(controller.World(), teleporter_node.GetTransform().GetPos(), vid, vtx_layout_spline, line_shader)
+		draw_teleporter_spline(controller.World(), teleporter_node.GetTransform().GetPos(), vid, vtx_layout_spline, line_shader)
 
 		vid += 1
 
@@ -132,7 +132,7 @@ def main():
 		hg.SetViewRect(vid, 0, 0, vr_state.width, vr_state.height)
 		hg.SetViewClear(vid, 0, 0, 1.0, 0)
 		hg.SetViewTransform(vid, right.view, right.proj)
-		DrawTeleporterSpline(controller.World(), teleporter_node.GetTransform().GetPos(), vid, vtx_layout_spline, line_shader)
+		draw_teleporter_spline(controller.World(), teleporter_node.GetTransform().GetPos(), vid, vtx_layout_spline, line_shader)
 
 		vid += 1
 

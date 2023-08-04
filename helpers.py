@@ -10,7 +10,7 @@ def create_material(ubc, orm, prg_ref):
 	return mat
 
 
-def DrawSpline(p1, p2, p3, p4, vid, vtx_layout_spline, line_shader):
+def draw_spline(p1, p2, p3, p4, vid, vtx_layout_spline, line_shader):
 	step = 10
 	prev_value = [p1.x, p1.y, p1.z]
 	vtx = hg.Vertices(vtx_layout_spline, step * 2)
